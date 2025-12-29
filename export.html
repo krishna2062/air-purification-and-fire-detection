@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Data | AirPure Systems</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="export.css">
+</head>
+
+<body class="export-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+    <!-- Header -->
+    <header class="export-header">
+        <div class="header-brand">
+            <i class="fas fa-database"></i>
+            <div>
+                <h1>DATA EXPORT PORTAL</h1>
+                <span class="subtitle">Log Extraction & Compliance</span>
+            </div>
+        </div>
+        <div class="header-status">
+            <div class="db-status">
+                <i class="fas fa-server"></i>
+                <div>
+                    <span class="label">DB CONNECTION</span>
+                    <span class="value online">ESTABLISHED</span>
+                </div>
+            </div>
+            <a href="index.html" class="btn-close"><i class="fas fa-times"></i></a>
+        </div>
+    </header>
+
+    <main class="export-grid">
+
+        <!-- Left: Query Builder -->
+        <section class="panel query-panel">
+            <div class="panel-head">
+                <h3><i class="fas fa-filter"></i> DATA FILTERS</h3>
+            </div>
+
+            <div class="form-section">
+                <label>Data Category</label>
+                <div class="category-grid">
+                    <label class="cat-card active">
+                        <input type="radio" name="category" value="air" checked>
+                        <i class="fas fa-wind"></i>
+                        <span>Air Data</span>
+                    </label>
+                    <label class="cat-card">
+                        <input type="radio" name="category" value="fire">
+                        <i class="fas fa-fire-extinguisher"></i>
+                        <span>Fire Logs</span>
+                    </label>
+                    <label class="cat-card">
+                        <input type="radio" name="category" value="ops">
+                        <i class="fas fa-cogs"></i>
+                        <span>System Ops</span>
+                    </label>
+                    <label class="cat-card">
+                        <input type="radio" name="category" value="all">
+                        <i class="fas fa-layer-group"></i>
+                        <span>All Data</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="group-row">
+                    <div class="g-col">
+                        <label>From Date</label>
+                        <input type="date" id="dateFrom" class="control-input">
+                    </div>
+                    <div class="g-col">
+                        <label>To Date</label>
+                        <input type="date" id="dateTo" class="control-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <label>Severity Filter</label>
+                <select id="severitySelect" class="control-select">
+                    <option value="all">All Levels</option>
+                    <option value="normal">Normal Only</option>
+                    <option value="warning">Warning / Alert</option>
+                    <option value="critical">Critical / Emergency</option>
+                </select>
+            </div>
+
+            <div class="form-section">
+                <label>Export Format</label>
+                <div class="format-options">
+                    <label class="radio-btn">
+                        <input type="radio" name="format" value="csv" checked> <span>CSV</span>
+                    </label>
+                    <label class="radio-btn">
+                        <input type="radio" name="format" value="json"> <span>JSON</span>
+                    </label>
+                    <label class="radio-btn">
+                        <input type="radio" name="format" value="xls"> <span>Excel</span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-preview" onclick="updatePreview()">
+                <i class="fas fa-sync"></i> UPDATE PREVIEW
+            </button>
+
+        </section>
+
+        <!-- Right: Preview & Action -->
+        <div class="right-col">
+
+            <!-- Preview Table -->
+            <section class="panel preview-panel">
+                <div class="panel-head">
+                    <h3><i class="fas fa-table"></i> DATA PREVIEW <span class="badge" id="rowCount">0 Records</span>
+                    </h3>
+                    <div class="util-tools">
+                        <button class="btn-text" onclick="copyToClip()"><i class="fas fa-copy"></i> Copy</button>
+                    </div>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Category</th>
+                                <th>Event / Metric</th>
+                                <th>Value</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="previewBody">
+                            <!-- JS Generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Export Action -->
+            <section class="panel action-panel">
+                <div class="progress-area hidden" id="progressArea">
+                    <div class="p-text">Processing Export... <span id="pPct">0%</span></div>
+                    <div class="p-bar">
+                        <div class="p-fill" id="pFill"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <div class="file-info" id="fileInfo">
+                        Ready to export <strong id="totalExportCount">0</strong> records.
+                    </div>
+                    <button class="btn-export" onclick="startExport()">
+                        <i class="fas fa-download"></i> EXPORT FILE
+                    </button>
+                </div>
+            </section>
+
+            <!-- Recent Exports -->
+            <section class="panel history-panel">
+                <div class="panel-head">
+                    <h3><i class="fas fa-history"></i> RECENT EXPORTS</h3>
+                    <button class="btn-text" onclick="clearHistory()">Clear</button>
+                </div>
+                <div class="history-list" id="exportHistory">
+                    <!-- JS Generated -->
+                    <div class="empty-state">No export history found.</div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <div id="toast" class="toast hidden">Export Complete</div>
+
+    <script src="export.js"></script>
+</body>
+
+</html>

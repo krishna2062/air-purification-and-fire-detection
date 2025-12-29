@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Control | AirPure Systems</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="devices.css">
+</head>
+
+<body class="device-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+
+
+    <main class="control-grid">
+
+        <!-- 1. AIR PURIFICATION MODULE -->
+        <section class="control-panel air-panel">
+            <div class="panel-header">
+                <h3><i class="fas fa-fan"></i> AIR PURIFICATION</h3>
+                <div class="panel-status">
+                    <span class="label">STATUS:</span>
+                    <span class="value" id="airStatus">STANDBY</span>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <!-- Power & Auto -->
+                <div class="control-group">
+                    <div class="toggle-switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="masterPower">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="control-label">MASTER POWER</span>
+                    </div>
+
+                    <div class="toggle-switch-wrapper">
+                        <label class="switch">
+                            <input type="checkbox" id="autoMode" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="control-label">AUTO MODE</span>
+                    </div>
+                </div>
+
+                <!-- Fan Speed Slider -->
+                <div class="slider-container disabled" id="fanSpeedContainer">
+                    <label>FAN SPEED (RPM)</label>
+                    <input type="range" min="0" max="100" value="0" class="industrial-slider" id="fanSpeed">
+                    <div class="slider-values">
+                        <span>0%</span>
+                        <span id="fanValueDisplay">0%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+
+                <!-- Mode Buttons -->
+                <div class="button-grid-2">
+                    <button class="ctrl-btn" id="btnSilent">
+                        <i class="fas fa-moon"></i> SILENT
+                    </button>
+                    <button class="ctrl-btn" id="btnBoost">
+                        <i class="fas fa-wind"></i> TURBO BOOST
+                    </button>
+                </div>
+
+                <div class="filter-status">
+                    <div class="filter-icon"><i class="fas fa-filter"></i></div>
+                    <div class="filter-info">
+                        <span>HEPA FILTER LIFE</span>
+                        <div class="progress-bar-industrial">
+                            <div class="fill" style="width: 85%"></div>
+                        </div>
+                    </div>
+                    <span class="filter-pc">85%</span>
+                </div>
+            </div>
+            <!-- Overlay for Safety Lock -->
+            <div class="safety-overlay hidden" id="airSafetyLock">
+                <i class="fas fa-lock"></i>
+                <span>LOCKED BY FIRE SYSTEM</span>
+            </div>
+        </section>
+
+        <!-- 2. FIRE SAFETY MODULE -->
+        <section class="control-panel fire-panel">
+            <div class="panel-header">
+                <h3><i class="fas fa-fire-extinguisher"></i> FIRE SAFETY</h3>
+                <div class="panel-status">
+                    <span class="label">SYSTEM:</span>
+                    <span class="value ok">ARMED</span>
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <div class="hazard-strip">
+                    <span>AUTHORIZED PERSONNEL ONLY</span>
+                </div>
+
+                <div class="control-list">
+                    <!-- Alarm Trigger -->
+                    <div class="control-item">
+                        <div class="item-info">
+                            <span class="item-title">MANUAL FIRE ALARM</span>
+                            <span class="item-desc">Triggers audible sirens & strobes</span>
+                        </div>
+                        <button class="btn-hazard" onclick="confirmAction('activateAlarm')">
+                            ACTIVATE
+                        </button>
+                    </div>
+
+                    <!-- Smoke Extraction -->
+                    <div class="control-item">
+                        <div class="item-info">
+                            <span class="item-title">SMOKE EXTRACTION</span>
+                            <span class="item-desc">Max power exhaust venting</span>
+                        </div>
+                        <button class="btn-hazard" onclick="confirmAction('smokeExtraction')">
+                            ENABLE
+                        </button>
+                    </div>
+
+                    <!-- Sprinklers -->
+                    <div class="control-item">
+                        <div class="item-info">
+                            <span class="item-title">AREA SPRINKLERS</span>
+                            <span class="item-desc">Zone 1-4 deployment</span>
+                        </div>
+                        <button class="btn-hazard disabled" title="Requires Admin Key">
+                            <i class="fas fa-lock"></i> LOCKED
+                        </button>
+                    </div>
+                </div>
+
+                <div class="test-zone">
+                    <button class="btn-outline" id="btnSystemTest">RUN DIAGNOSTICS</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. EMERGENCY OVERRIDE -->
+        <section class="control-panel emergency-panel">
+            <div class="panel-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> EMERGENCY OVERRIDE</h3>
+            </div>
+
+            <div class="panel-body center-content">
+                <p class="warning-text">LONG PRESS TO ACTIVATE (3s)</p>
+
+                <div class="long-press-wrapper">
+                    <button class="big-red-button" id="btnEmergencyStop">
+                        <i class="fas fa-power-off"></i>
+                        <span>EMERGENCY<br>SHUTDOWN</span>
+                    </button>
+                    <svg class="progress-ring" width="200" height="200">
+                        <circle class="progress-ring__circle" stroke="white" stroke-width="4" fill="transparent" r="90"
+                            cx="100" cy="100" />
+                    </svg>
+                </div>
+
+                <div class="long-press-wrapper small">
+                    <button class="btn-warning-long" id="btnEvacuate">
+                        <i class="fas fa-running"></i> TRIGGER EVACUATION
+                    </button>
+                </div>
+
+                <div class="log-console" id="auditLog">
+                    <div class="log-header">SYSTEM AUDIT LOG</div>
+                    <!-- Logs go here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal for Confirmation -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="modal-title"><i class="fas fa-exclamation-circle"></i> CONFIRM ACTION</h2>
+            <p id="modalText">Are you sure you want to activate the fire alarm?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">CANCEL</button>
+                <button class="btn-confirm" id="modalConfirmBtn">CONFIRM</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="devices.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Center | AirPure Safety</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="alert.css">
+</head>
+
+<body class="alert-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+    <!-- Header -->
+    <header class="alert-header">
+        <div class="header-left">
+            <div class="logo-area">
+                <i class="fas fa-shield-alt logo-icon"></i>
+                <div class="logo-text">
+                    <h1>S.A.F.E. MONITOR</h1>
+                    <span>Safety Alert & Fire Emergency</span>
+                </div>
+            </div>
+            <div class="system-status safe" id="globalStatus">
+                <span class="status-icon"><i class="fas fa-check-circle"></i></span>
+                <div class="status-info">
+                    <span class="label">SYSTEM STATUS</span>
+                    <span class="value">NORMAL</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-center">
+            <div class="stat-badge">
+                <span class="label">Active Alerts</span>
+                <span class="value" id="activeCount">0</span>
+            </div>
+            <div class="connection-status online">
+                <span class="dot"></span> Connected
+            </div>
+        </div>
+
+        <div class="header-right">
+            <button class="btn-action btn-silence" id="btnSilence" disabled>
+                <i class="fas fa-volume-mute"></i> Silence Alarm
+            </button>
+            <a href="index.html" class="btn-exit"><i class="fas fa-times"></i></a>
+        </div>
+    </header>
+
+    <main class="alert-grid">
+
+        <!-- ROW 1 -->
+        <!-- Active Alerts Panel -->
+        <section class="panel active-alerts-panel">
+            <div class="panel-head">
+                <h3><i class="fas fa-bell"></i> Active Alerts Stack</h3>
+                <div class="filter-pills">
+                    <span class="pill active" data-filter="all">All</span>
+                    <span class="pill" data-filter="fire">Fire</span>
+                    <span class="pill" data-filter="air">Air Quality</span>
+                </div>
+            </div>
+            <div class="alert-feed-container" id="activeAlertsList">
+                <!-- JS Injected Alerts -->
+                <div class="empty-state">
+                    <i class="fas fa-check-double"></i>
+                    <p>No active alerts. System is secure.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fire Emergency Panel -->
+        <section class="panel fire-emergency-panel" id="firePanel">
+            <div class="panel-head">
+                <h3><i class="fas fa-fire-extinguisher"></i> Fire Suppression System</h3>
+                <span class="status-badge" id="fireSystemStatus">STANDBY</span>
+            </div>
+
+            <div class="fire-dashboard">
+                <div class="emergency-indicator" id="fireIndicator">
+                    <div class="indicator-icon"><i class="fas fa-fire"></i></div>
+                    <span>FIRE STATUS</span>
+                    <strong>CLEAR</strong>
+                </div>
+
+                <div class="sensor-readings">
+                    <div class="reading-row">
+                        <span class="reading-label"><i class="fas fa-smog"></i> Smoke Level</span>
+                        <div class="reading-bar-container">
+                            <div class="reading-bar" id="smokeBar" style="width: 0%"></div>
+                        </div>
+                        <span class="reading-val" id="smokeVal">0%</span>
+                    </div>
+                    <div class="reading-row">
+                        <span class="reading-label"><i class="fas fa-thermometer-full"></i> Heat Sensor</span>
+                        <div class="reading-bar-container">
+                            <div class="reading-bar" id="heatBar" style="width: 0%"></div>
+                        </div>
+                        <span class="reading-val" id="heatVal">24°C</span>
+                    </div>
+                </div>
+
+                <div class="safety-controls">
+                    <button class="safety-btn" onclick="triggerManualDrill()"><i class="fas fa-bell"></i> TEST
+                        ALARM</button>
+                    <button class="safety-btn danger" onclick="triggerEmergency()"
+                        onlongpress="confirm('Trigger Emergency?')"><i class="fas fa-exclamation-triangle"></i>
+                        EMERGENCY</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROW 2 -->
+        <!-- Stats & Severity -->
+        <section class="panel stats-panel">
+            <div class="panel-head">
+                <h3><i class="fas fa-chart-pie"></i> Severity Distribution</h3>
+            </div>
+            <div class="chart-wrapper-small">
+                <canvas id="severityChart"></canvas>
+            </div>
+            <div class="stats-grid">
+                <div class="tiny-stat critical">
+                    <span class="num" id="countCritical">0</span>
+                    <span class="lbl">Critical</span>
+                </div>
+                <div class="tiny-stat warning">
+                    <span class="num" id="countWarning">0</span>
+                    <span class="lbl">Warning</span>
+                </div>
+                <div class="tiny-stat info">
+                    <span class="num" id="countInfo">0</span>
+                    <span class="lbl">Info</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Insights -->
+        <section class="panel insights-panel">
+            <div class="panel-head">
+                <h3><i class="fas fa-brain"></i> AI Safety Insights</h3>
+            </div>
+            <div class="insight-content">
+                <div class="insight-item">
+                    <i class="fas fa-history"></i>
+                    <p><strong>Frequent Pattern:</strong> Zone 3 triggers PM2.5 warnings daily at 09:00 AM. <em>Check
+                            ventilation schedule.</em></p>
+                </div>
+                <div class="insight-item" style="margin-top: 1rem;">
+                    <i class="fas fa-stopwatch"></i>
+                    <p><strong>Avg Response Time:</strong> <span class="highlight-val">1.4 min</span> (Excellent)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ROW 3 -->
+        <!-- History Table -->
+        <section class="panel history-panel">
+            <div class="panel-head">
+                <h3><i class="fas fa-clipboard-list"></i> Alert History Log</h3>
+                <div class="table-tools">
+                    <input type="text" id="alertSearch" placeholder="Search logs...">
+                    <select id="severityFilter">
+                        <option value="all">All Severities</option>
+                        <option value="critical">Critical Only</option>
+                        <option value="warning">Warning + Critical</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="alert-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Severity</th>
+                            <th>Alert Type</th>
+                            <th>Sensor / Source</th>
+                            <th>Action Taken</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="alertTableBody">
+                        <!-- JS Injected -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button id="histPrev" disabled><i class="fas fa-chevron-left"></i></button>
+                <span id="histPage">Page 1</span>
+                <button id="histNext"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Alert Details</h3>
+                <button class="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <!-- Content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-action" onclick="closeModal()">Close</button>
+                <button class="btn-action primary" id="modalAckBtn">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="alert.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raw Data Feed | AirPure IoT</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="realtime.css">
+</head>
+
+<body class="data-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+    <!-- Top Bar -->
+    <header class="data-header">
+        <div class="header-brand">
+            <i class="fas fa-database"></i>
+            <span>SENSOR DATA STREAM (TCP/IP)</span>
+        </div>
+        <div class="header-controls">
+            <div class="stream-status active" id="streamStatus">
+                <span class="dot"></span> LIVE
+            </div>
+            <a href="dashboard.html" class="btn-nav">DASHBOARD</a>
+            <a href="index.html" class="btn-nav">EXIT</a>
+        </div>
+    </header>
+
+    <main class="data-layout">
+
+        <!-- SECTION 1: TABULAR DATA -->
+        <section class="table-container">
+            <div class="panel-toolbar">
+                <h3><i class="fas fa-table"></i> INCOMING TELEMETRY</h3>
+                <div class="toolbar-actions">
+                    <button class="tool-btn" id="btnPause" onclick="toggleStream()"><i class="fas fa-pause"></i>
+                        PAUSE</button>
+                    <button class="tool-btn" onclick="clearTable()"><i class="fas fa-trash"></i> CLEAR</button>
+                    <button class="tool-btn highlight" onclick="exportCSV()"><i class="fas fa-download"></i> EXPORT
+                        .CSV</button>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>TIMESTAMP</th>
+                            <th>SENSOR ID</th>
+                            <th>TYPE</th>
+                            <th>VALUE</th>
+                            <th>UNIT</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECTION 2: RAW LOGS -->
+        <section class="log-container">
+            <div class="panel-toolbar small">
+                <h3><i class="fas fa-terminal"></i> RAW PAYLOAD (JSON)</h3>
+                <span class="rate-badge">Rate: 1.0 Hz</span>
+            </div>
+            <div class="console-output" id="consoleOutput">
+                <div class="log-line system">> Connecting to wss://airpure-iot/stream...</div>
+                <div class="log-line system">> Connection established. Handshake OK.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="realtime.js"></script>
+</body>
+
+</html>

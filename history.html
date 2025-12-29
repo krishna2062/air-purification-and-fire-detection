@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History & Logs | AirPure IoT</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css"> <!-- Base styles -->
+    <link rel="stylesheet" href="history.css"> <!-- Page specific styles -->
+</head>
+
+<body class="history-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+    <!-- Header -->
+    <header class="history-header">
+        <div class="header-brand">
+            <div class="logo-area">
+                <i class="fas fa-history logo-icon"></i>
+                <h1>Environmental <span class="highlight">History & Logs</span></h1>
+            </div>
+        </div>
+
+        <div class="header-controls">
+            <!-- Date Range Picker Simulation -->
+            <div class="control-item date-range">
+                <label><i class="fas fa-calendar-alt"></i> Range:</label>
+                <input type="datetime-local" id="startDate" class="date-input">
+                <span class="separator">to</span>
+                <input type="datetime-local" id="endDate" class="date-input">
+            </div>
+
+            <!-- Filter Type -->
+            <div class="control-item">
+                <select id="dataTypeFilter" class="glass-select">
+                    <option value="all">All Data Types</option>
+                    <option value="air">Air Quality Only</option>
+                    <option value="fire">Fire & Safety Only</option>
+                </select>
+            </div>
+
+            <!-- Exports -->
+            <div class="control-item actions">
+                <button class="btn-export" onclick="exportData('csv')"><i class="fas fa-file-csv"></i> CSV</button>
+                <button class="btn-export" onclick="exportData('pdf')"><i class="fas fa-file-pdf"></i> PDF</button>
+            </div>
+
+            <button id="themeToggle" class="btn-close" style="font-size: 1rem; margin-right: 1rem;"
+                title="Toggle Theme">
+                <i class="fas fa-moon"></i>
+            </button>
+
+            <a href="index.html" class="btn-close"><i class="fas fa-times"></i></a>
+        </div>
+    </header>
+
+    <main class="history-layout">
+
+        <!-- 1. Summary Statistics (Cards) -->
+        <section class="summary-section">
+            <div class="summary-card" data-type="aqi">
+                <div class="card-icon"><i class="fas fa-wind"></i></div>
+                <div class="card-info">
+                    <span class="label">Average AQI</span>
+                    <span class="value" id="avgAqi">--</span>
+                    <span class="sub-text">In selected range</span>
+                </div>
+            </div>
+
+            <div class="summary-card" data-type="danger">
+                <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="card-info">
+                    <span class="label">Total Fire Alerts</span>
+                    <span class="value" id="totalAlerts">0</span>
+                    <span class="sub-text">Critical Events</span>
+                </div>
+            </div>
+
+            <div class="summary-card" data-type="max">
+                <div class="card-icon"><i class="fas fa-temperature-high"></i></div>
+                <div class="card-info">
+                    <span class="label">Max Temp Recorded</span>
+                    <span class="value" id="maxTemp">--°C</span>
+                    <span class="sub-text">Peak Value</span>
+                </div>
+            </div>
+
+            <div class="summary-card" data-type="uptime">
+                <div class="card-icon"><i class="fas fa-server"></i></div>
+                <div class="card-info">
+                    <span class="label">System Uptime</span>
+                    <span class="value">99.9%</span>
+                    <span class="sub-text">No outages</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Historical Charts -->
+        <section class="charts-section">
+            <div class="chart-panel large">
+                <div class="panel-head">
+                    <h3><i class="fas fa-chart-line"></i> Historical AQI Trends</h3>
+                    <div class="legend">
+                        <span class="dot pm25"></span> PM2.5
+                        <span class="dot pm10"></span> PM10
+                        <span class="dot aqi"></span> AQI
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <canvas id="historyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="side-charts">
+                <div class="chart-panel small">
+                    <div class="panel-head">
+                        <h3><i class="fas fa-fire"></i> Fire Alerts Frequency</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="fireBarChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-panel small">
+                    <div class="panel-head">
+                        <h3><i class="fas fa-leaf"></i> CO₂ vs VOC Levels</h3>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="gasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Detailed Data Table & Log -->
+        <section class="data-section">
+            <div class="section-tabs">
+                <button class="tab-btn active" data-tab="table-view"><i class="fas fa-table"></i> Comprehensive Data
+                    Log</button>
+                <button class="tab-btn" data-tab="timeline-view"><i class="fas fa-stream"></i> Fire Event
+                    Timeline</button>
+            </div>
+
+            <div class="table-controls">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="tableSearch" placeholder="Search logs (e.g., 'Warning', 'Zone 1')...">
+                </div>
+                <div class="display-opts">
+                    <span>Show:</span>
+                    <select id="rowsPerPage">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tab Content: Table -->
+            <div id="table-view" class="tab-content active">
+                <div class="table-responsive">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable(0)">Timestamp <i class="fas fa-sort"></i></th>
+                                <th onclick="sortTable(1)">Event Type <i class="fas fa-sort"></i></th>
+                                <th>Sensor Values (Avg)</th>
+                                <th>Status</th>
+                                <th>System Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <!-- JS Generated Rows -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button id="prevPage" disabled><i class="fas fa-chevron-left"></i></button>
+                    <span id="pageInfo">Page 1 of --</span>
+                    <button id="nextPage"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Tab Content: Timeline -->
+            <div id="timeline-view" class="tab-content">
+                <div class="timeline-container" id="fireTimeline">
+                    <!-- JS Generated Timeline Items -->
+                    <div class="timeline-item">
+                        <div class="time-marker">Today, 10:42 AM</div>
+                        <div class="event-card warning">
+                            <h4><i class="fas fa-exclamation-circle"></i> Smoke Detected</h4>
+                            <p>Minor smoke levels detected in Kitchen Zone. System verified false alarm (cooking).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Recommendation/Insights Panel (Floating or Bottom) -->
+    <div class="insights-panel">
+        <div class="insight-header">
+            <i class="fas fa-lightbulb"></i> AI Insights
+        </div>
+        <div class="insight-body">
+            <p><strong>Pattern Detected:</strong> CO₂ levels peak consistently between 2 PM - 4 PM. Recommendation:
+                Schedule auto-ventilation for 1:45 PM.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="history.js"></script>
+</body>
+
+</html>

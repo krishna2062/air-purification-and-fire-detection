@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analysis | AirPure Systems</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="reports.css">
+</head>
+
+<body class="report-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+    <!-- Header -->
+    <header class="report-header">
+        <div class="header-brand">
+            <i class="fas fa-file-invoice-dollar"></i> <!-- Using generic invoice/file icon -->
+            <div>
+                <h1>SYSTEM REPORTS</h1>
+                <span class="subtitle">Analytics & Compliance</span>
+            </div>
+        </div>
+        <div class="header-tools">
+            <div class="date-display" id="dateDisplay">--:--</div>
+            <a href="index.html" class="btn-close"><i class="fas fa-times"></i></a>
+        </div>
+    </header>
+
+    <main class="report-layout">
+
+        <!-- Sidebar: Configuration -->
+        <aside class="config-sidebar">
+            <div class="panel config-panel">
+                <h3><i class="fas fa-sliders-h"></i> REPORT CONFIG</h3>
+
+                <div class="form-group">
+                    <label>Report Type</label>
+                    <div class="type-selector" id="repTypeSelector">
+                        <button class="type-btn active" data-type="air"><i class="fas fa-wind"></i> Air Quality</button>
+                        <button class="type-btn" data-type="fire"><i class="fas fa-fire-extinguisher"></i> Fire
+                            Safety</button>
+                        <button class="type-btn" data-type="full"><i class="fas fa-layer-group"></i> Full
+                            System</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Duration</label>
+                    <select id="timeRange" class="control-select">
+                        <option value="today">Today (24h)</option>
+                        <option value="week" selected>Last 7 Days</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Includes</label>
+                    <label class="check-row"><input type="checkbox" checked id="incCharts"> Charts & Trends</label>
+                    <label class="check-row"><input type="checkbox" checked id="incLogs"> Detailed Logs</label>
+                    <label class="check-row"><input type="checkbox" checked id="incNotes"> AI Insights</label>
+                </div>
+
+                <button class="btn-generate" onclick="generateReport()">
+                    <i class="fas fa-magic"></i> GENERATE REPORT
+                </button>
+
+                <hr class="separator">
+
+                <h4>Saved Reports</h4>
+                <div class="history-list" id="historyList">
+                    <!-- History items injected here -->
+                    <div class="empty-msg">No recent reports</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main: Report Preview -->
+        <section class="preview-area">
+
+            <!-- Toolbar -->
+            <div class="preview-toolbar">
+                <span class="preview-title">Preview</span>
+                <div class="export-actions">
+                    <button class="btn-action" onclick="exportData('pdf')"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn-action" onclick="exportData('csv')"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button class="btn-action" onclick="printReport()"><i class="fas fa-print"></i> Print</button>
+                </div>
+            </div>
+
+            <!-- The Report Document -->
+            <div class="report-paper" id="reportContent">
+
+                <!-- Report Header -->
+                <div class="doc-header">
+                    <div class="doc-logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <h2>AirPure Intelligence</h2>
+                    </div>
+                    <div class="doc-meta">
+                        <p><strong>Report:</strong> <span id="repTitle">Air Quality Analysis</span></p>
+                        <p><strong>Date:</strong> <span id="repDate">2025-12-28</span></p>
+                        <p><strong>ID:</strong> <span id="repId">R-00000</span></p>
+                    </div>
+                </div>
+
+                <!-- Report Summary -->
+                <div class="doc-section">
+                    <h3 class="sec-title">Executive Summary</h3>
+                    <div class="summary-grid" id="summaryGrid">
+                        <!-- Cards injected via JS -->
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="doc-section">
+                    <h3 class="sec-title">System Insights</h3>
+                    <div class="ai-box" id="aiInsights">
+                        Loading analysis...
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="doc-section page-break">
+                    <h3 class="sec-title">Trend Analysis</h3>
+                    <div class="chart-container">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="doc-section">
+                    <h3 class="sec-title">Detailed Event Log</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>Event / Metric</th>
+                                <th>Value</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody">
+                            <!-- Rows -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Footer -->
+                <div class="doc-footer">
+                    <p>Generated automatically by AirPure IoT Dashboard. Authorized use only.</p>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast" class="toast hidden">Report Generated</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="reports.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics | AirPure Intelligence</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="analytics.css">
+</head>
+
+<body class="analytics-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+    <!-- 1. Analytics Header Section -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <div class="logo-area">
+                <i class="fas fa-chart-network logo-icon"></i>
+                <h1>AirPure <span class="highlight">Intelligence</span></h1>
+            </div>
+            <div class="system-status" id="systemStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">SYSTEM OPTIMAL</span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="metric-group">
+                <span class="label">Last Updated</span>
+                <span class="value font-mono" id="lastUpdated">--:--:--</span>
+            </div>
+            <div class="control-group">
+                <select id="buildingSelector" class="glass-select">
+                    <option value="b1">Main Campus - Block A</option>
+                    <option value="b2">Research Lab - Zone 4</option>
+                    <option value="b3">Industrial Unit - Floor 2</option>
+                </select>
+                <button class="btn-icon"><i class="fas fa-cog"></i></button>
+                <a href="index.html" class="btn-secondary"><i class="fas fa-sign-out-alt"></i> Exit</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+
+        <!-- 2. KPI Cards Section -->
+        <section class="kpi-section">
+            <div class="kpi-card" data-type="aqi">
+                <div class="card-header">
+                    <span class="title">Air Quality Index</span>
+                    <i class="fas fa-wind icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="value-wrapper">
+                        <span class="value" id="kpi-aqi">--</span>
+                        <span class="unit">AQI</span>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i> 2% vs last hr
+                    </div>
+                </div>
+                <div class="progress-bar-mini">
+                    <div class="fill" style="width: 45%"></div>
+                </div>
+            </div>
+
+            <div class="kpi-card" data-type="fire">
+                <div class="card-header">
+                    <span class="title">Fire Risk Prob.</span>
+                    <i class="fas fa-fire-extinguisher icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="value-wrapper">
+                        <span class="value" id="kpi-fire">0</span>
+                        <span class="unit">%</span>
+                    </div>
+                    <div class="trend stable">
+                        <i class="fas fa-minus"></i> Stable
+                    </div>
+                </div>
+                <div class="progress-bar-mini fire">
+                    <div class="fill" style="width: 5%"></div>
+                </div>
+            </div>
+
+            <div class="kpi-card" data-type="smoke">
+                <div class="card-header">
+                    <span class="title">Smoke Density</span>
+                    <i class="fas fa-smog icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="value-wrapper">
+                        <span class="value" id="kpi-smoke">--</span>
+                        <span class="unit">ppm</span>
+                    </div>
+                    <div class="trend down">
+                        <i class="fas fa-arrow-down"></i> Safe
+                    </div>
+                </div>
+                <div class="progress-bar-mini">
+                    <div class="fill" style="width: 12%"></div>
+                </div>
+            </div>
+
+            <div class="kpi-card" data-type="efficiency">
+                <div class="card-header">
+                    <span class="title">Purifier Efficiency</span>
+                    <i class="fas fa-fan icon"></i>
+                </div>
+                <div class="card-body">
+                    <div class="value-wrapper">
+                        <span class="value" id="kpi-eff">98</span>
+                        <span class="unit">%</span>
+                    </div>
+                    <div class="trend up">
+                        <i class="fas fa-check"></i> Optimized
+                    </div>
+                </div>
+                <div class="progress-bar-mini good">
+                    <div class="fill" style="width: 98%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Air Quality Analytics (Large Chart) -->
+        <section class="panel air-analytics">
+            <div class="panel-header">
+                <h3><i class="fas fa-chart-area"></i> Real-time Air Quality Trends</h3>
+                <div class="panel-controls">
+                    <button class="time-btn active">1H</button>
+                    <button class="time-btn">24H</button>
+                    <button class="time-btn">7D</button>
+                </div>
+            </div>
+            <div class="chart-container main-chart">
+                <canvas id="airQualityChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 4. Fire Detection Analytics -->
+        <section class="panel fire-analytics">
+            <div class="panel-header fire-header">
+                <h3><i class="fas fa-fire"></i> Fire Safety Intelligence</h3>
+                <span class="live-badge">LIVE MONITORING</span>
+            </div>
+            <div class="fire-grid">
+                <div class="gauge-wrapper">
+                    <canvas id="fireRiskGauge"></canvas>
+                    <div class="gauge-label">Risk Level</div>
+                </div>
+                <div class="heatmap-wrapper">
+                    <h4>Smoke Density Heatmap</h4>
+                    <!-- Custom built heatmap grid using DIVs for simulation consistency -->
+                    <div class="heatmap-grid" id="smokeHeatmap">
+                        <!-- Items injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Predictive AI & Insights -->
+        <section class="panel ai-insights">
+            <div class="panel-header ai-header">
+                <h3><i class="fas fa-brain"></i> AI Predictive Analysis</h3>
+            </div>
+            <div class="ai-content">
+                <div class="insight-card">
+                    <div class="insight-icon"><i class="fas fa-crystal-ball"></i></div>
+                    <div class="insight-text">
+                        <h4>Future Air Quality</h4>
+                        <p id="ai-prediction-text">Analysis suggests stable AQI for next 4 hours based on ventilation
+                            patterns.</p>
+                        <div class="confidence-meter">
+                            <span>Confidence: 94%</span>
+                            <div class="meter-bar">
+                                <div class="fill" style="width: 94%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-container small-chart">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Dual Axis / Environmental -->
+        <section class="panel env-analytics">
+            <div class="panel-header">
+                <h3><i class="fas fa-temperature-high"></i> Temp vs Humidity</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="envChart"></canvas>
+            </div>
+        </section>
+
+        <!-- 7. Alerts & Incidents -->
+        <section class="panel alerts-section">
+            <div class="panel-header">
+                <h3><i class="fas fa-bell"></i> Recent Alerts</h3>
+                <span class="badge" id="alertCount">0 New</span>
+            </div>
+            <div class="alerts-list" id="alertsList">
+                <!-- Alerts injected by JS -->
+                <div class="alert-item info">
+                    <div class="alert-icon"><i class="fas fa-info-circle"></i></div>
+                    <div class="alert-content">
+                        <span class="alert-title">System Calibration</span>
+                        <span class="alert-time">10:00 AM</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Correlation Analysis -->
+        <section class="panel correlation-section">
+            <div class="panel-header">
+                <h3><i class="fas fa-project-diagram"></i> Smoke vs AQI Correlation</h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="correlationChart"></canvas>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Report Action -->
+    <div class="floating-actions">
+        <button class="fab-btn" title="Download Report"><i class="fas fa-file-pdf"></i></button>
+        <button class="fab-btn secondary" title="Settings"><i class="fas fa-sliders-h"></i></button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="analytics.js"></script>
+</body>
+
+</html>

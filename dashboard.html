@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Dashboard | AirPure IoT</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body class="dashboard-body">
+    <div id="navbar-placeholder"></div>
+    <script src="js/navbar-loader.js"></script>
+
+    <!-- Header Section -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="brand-area">
+                <i class="fas fa-network-wired logo-icon"></i>
+                <div class="brand-text">
+                    <h1>SYSTEM OVERVIEW</h1>
+                    <span class="subtitle">UNIT ID: AP-IOT-X99</span>
+                </div>
+            </div>
+            <div class="status-badge safe" id="globalStatus">
+                <span class="pulse-dot"></span>
+                <span class="status-text">SYSTEM OPTIMAL</span>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="info-group">
+                <span class="label">LAST UPDATE</span>
+                <span class="value mono" id="lastUpdate">--:--:--</span>
+            </div>
+            <div class="info-group">
+                <span class="label">Uptime</span>
+                <span class="value mono">14d 02h</span>
+            </div>
+            <div class="override-box" id="emergencyBox">
+                <span class="label">EMERGENCY OVERRIDE</span>
+                <span class="value off">INACTIVE</span>
+            </div>
+            <button id="logoutBtn" class="action-btn"
+                style="margin-left: 20px; color: var(--color-crit); border-color: var(--color-crit);">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-grid">
+
+        <!-- 1. Key Metrics Row -->
+        <section class="metrics-row">
+            <!-- AQI Card -->
+            <div class="metric-card" data-type="aqi">
+                <div class="card-top">
+                    <span class="card-title">Air Quality Index</span>
+                    <i class="fas fa-wind card-icon"></i>
+                </div>
+                <div class="card-main">
+                    <span class="metric-value" id="aqiValue">--</span>
+                    <span class="metric-unit">AQI</span>
+                </div>
+                <div class="card-footer">
+                    <div class="progress-bar">
+                        <div class="fill" id="aqiBar" style="width: 0%"></div>
+                    </div>
+                    <span class="status-text safe" id="aqiStatus">Good</span>
+                </div>
+            </div>
+
+            <!-- PM2.5 Card -->
+            <div class="metric-card" data-type="pm">
+                <div class="card-top">
+                    <span class="card-title">PM2.5 Conc.</span>
+                    <i class="fas fa-smog card-icon"></i>
+                </div>
+                <div class="card-main">
+                    <span class="metric-value" id="pmValue">--</span>
+                    <span class="metric-unit">µg/m³</span>
+                </div>
+                <div class="card-footer">
+                    <span class="trend up"><i class="fas fa-arrow-up"></i> 2%</span>
+                    <span class="sub-text">vs 1h ago</span>
+                </div>
+            </div>
+
+            <!-- Fire Risk Card -->
+            <div class="metric-card" data-type="fire">
+                <div class="card-top">
+                    <span class="card-title">Fire Risk Index</span>
+                    <i class="fas fa-fire card-icon"></i>
+                </div>
+                <div class="card-main">
+                    <span class="metric-value" id="fireRiskValue">0</span>
+                    <span class="metric-unit">%</span>
+                </div>
+                <div class="card-footer">
+                    <div class="progress-bar">
+                        <div class="fill fire" id="fireBar" style="width: 0%"></div>
+                    </div>
+                    <span class="status-text safe" id="fireStatus">Low</span>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="metric-card" data-type="health">
+                <div class="card-top">
+                    <span class="card-title">System Health</span>
+                    <i class="fas fa-heartbeat card-icon"></i>
+                </div>
+                <div class="card-main">
+                    <span class="metric-value">98</span>
+                    <span class="metric-unit">%</span>
+                </div>
+                <div class="card-footer">
+                    <span class="status-text safe"><i class="fas fa-check-circle"></i> All Systems Go</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Main Visuals (Charts) -->
+        <section class="main-charts-area">
+            <div class="panel chart-panel-lg">
+                <div class="panel-head">
+                    <h3><i class="fas fa-chart-area"></i> Real-time Air Quality Trend</h3>
+                    <div class="panel-actions">
+                        <button class="action-btn active">Live</button>
+                        <button class="action-btn">1H</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="mainAqiChart"></canvas>
+                </div>
+            </div>
+
+            <div class="panel chart-panel-sm">
+                <div class="panel-head">
+                    <h3><i class="fas fa-poll"></i> Pollutant Breakdown</h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pollutantBarChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Sidebar: Insights & devices -->
+        <aside class="dashboard-sidebar">
+
+            <!-- Analysis Panel -->
+            <div class="panel insights-panel">
+                <div class="panel-head">
+                    <h3><i class="fas fa-lightbulb"></i> System Intelligence</h3>
+                </div>
+                <div class="insight-list" id="insightList">
+                    <!-- Dynamic Items -->
+                    <div class="insight-item">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Analyzing incoming telemetry...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Device Status -->
+            <div class="panel device-panel">
+                <div class="panel-head">
+                    <h3><i class="fas fa-cogs"></i> Device Status</h3>
+                </div>
+                <div class="device-list">
+                    <div class="device-row">
+                        <div class="dev-info">
+                            <span class="dev-name">Main Purifier</span>
+                            <span class="dev-sub" id="purifierSpeed">Speed: Auto</span>
+                        </div>
+                        <div class="dev-status on" id="purifierStatus">ON</div>
+                    </div>
+                    <div class="device-row">
+                        <div class="dev-info">
+                            <span class="dev-name">Exhaust Fans</span>
+                            <span class="dev-sub">Zone 1-4</span>
+                        </div>
+                        <div class="dev-status off" id="fanStatus">OFF</div>
+                    </div>
+                    <div class="device-row">
+                        <div class="dev-info">
+                            <span class="dev-name">Fire Alarm</span>
+                            <span class="dev-sub">Auto-Trigger</span>
+                        </div>
+                        <div class="dev-status ready">ARMED</div>
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- 4. Bottom Row: Alerts & Env -->
+        <section class="bottom-row">
+
+            <!-- Alerts -->
+            <div class="panel alerts-panel">
+                <div class="panel-head">
+                    <h3><i class="fas fa-bell"></i> Active Alerts</h3>
+                    <span class="badge" id="activeAlertCount">0</span>
+                </div>
+                <div class="alert-scroll" id="alertFeed">
+                    <div class="empty-state">No Active Alerts</div>
+                </div>
+                <div class="panel-foot">
+                    <a href="alert.html">View Alarm History <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Environmental Summary -->
+            <div class="panel env-panel">
+                <div class="panel-head">
+                    <h3><i class="fas fa-thermometer-half"></i> Indoor Environment</h3>
+                </div>
+                <div class="env-grid">
+                    <div class="env-item">
+                        <span class="env-icon"><i class="fas fa-temperature-low"></i></span>
+                        <div class="env-data">
+                            <span class="env-val" id="tempVal">--°C</span>
+                            <span class="env-lbl">Temperature</span>
+                        </div>
+                    </div>
+                    <div class="env-item">
+                        <span class="env-icon"><i class="fas fa-tint"></i></span>
+                        <div class="env-data">
+                            <span class="env-val" id="humVal">--%</span>
+                            <span class="env-lbl">Humidity</span>
+                        </div>
+                    </div>
+                    <div class="env-item">
+                        <span class="env-icon"><i class="fas fa-smile"></i></span>
+                        <div class="env-data">
+                            <span class="env-val safe">Excellent</span>
+                            <span class="env-lbl">Comfort Level</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
